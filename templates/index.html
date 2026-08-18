@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥔 runsonpotato.dev</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --card-bg: #161b22;
+            --border: #30363d;
+            --text: #c9d1d9;
+            --accent: #58a6ff;
+            --green: #3fb950;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(63, 185, 80, 0.15);
+            color: var(--green);
+            border: 1px solid var(--green);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        h1 { margin: 0 0 8px 0; color: #fff; }
+        p.subtitle { color: #8b949e; margin-bottom: 24px; }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 24px 0;
+            text-align: left;
+        }
+        .stat-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 12px 16px;
+            border-radius: 8px;
+        }
+        .stat-label { font-size: 0.75rem; color: #8b949e; text-transform: uppercase; }
+        .stat-val { font-size: 1.1rem; font-weight: bold; color: #fff; margin-top: 4px; }
+        .links a {
+            display: inline-block;
+            margin: 8px 6px;
+            padding: 8px 16px;
+            background: #21262d;
+            color: var(--accent);
+            text-decoration: none;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .links a:hover { background: #30363d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="badge">● LIVE HARDWARE NODE</div>
+        <h1>🥔 runsonpotato.dev</h1>
+        <p class="subtitle">A full-stack website self-hosted on a cracked Samsung S22 Ultra.</p>
+
+        <div class="grid">
+            <div class="stat-card">
+                <div class="stat-label">Host Node</div>
+                <div class="stat-val">{{ server_name }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">CPU Utilization</div>
+                <div class="stat-val">{{ cpu_percent }}%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">RAM Allocation</div>
+                <div class="stat-val">{{ ram_used_gb }} / {{ ram_total_gb }} GB ({{ ram_percent }}%)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Uptime</div>
+                <div class="stat-val">{{ uptime_hours }} hrs</div>
+            </div>
+        </div>
+
+        <div class="links">
+            <a href="/docs" target="_blank">📖 Swagger API Docs</a>
+            <a href="/api/health" target="_blank">🩺 Health Check</a>
+            <a href="/api/projects" target="_blank">📂 Project Index</a>
+        </div>
+    </div>
+</body>
+</html>
