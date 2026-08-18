@@ -3,105 +3,525 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🥔 runsonpotato.dev</title>
+    <title>runsonpotato.dev</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=JetBrains+Mono:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        @font-face {
+            font-family: 'Ndot57';
+            src: url('fonts/Ndot57-Regular.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Ndot57Caps';
+            src: url('fonts/Ndot57Caps-Regular.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+        }
+
         :root {
-            --bg: #0d1117;
-            --card-bg: #161b22;
-            --border: #30363d;
-            --text: #c9d1d9;
-            --accent: #58a6ff;
-            --green: #3fb950;
+            --bg: #000000;
+            --bg-alt: #0a0a0a;
+            --panel: rgba(8, 8, 8, 0.98);
+            --border: rgba(255,255,255,0.08);
+            --text: #ffffff;
+            --muted: #a0a0a0;
+            --soft: #808080;
+            --accent: #ffffff;
+            --accent-2: #d0d0d0;
+            --grid: rgba(255,255,255,0.04);
         }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+
+        * { box-sizing: border-box; }
+
+        html, body {
             margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
+            min-height: 100%;
+            font-family: 'JetBrains Mono', 'Space Mono', -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", monospace;
+            background:
+                radial-gradient(circle at top, rgba(255,255,255,0.04), transparent 18%),
+                linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
+            color: var(--text);
         }
-        .container {
-            max-width: 600px;
-            width: 100%;
-            background: var(--card-bg);
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 20px;
+        }
+
+        .shell {
+            position: relative;
+            width: min(1240px, 100%);
+            background: rgba(10, 10, 10, 0.85);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 32px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            overflow: hidden;
+            padding: 48px 52px;
         }
+
+        .shell::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(circle at center, black 22%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .topbar, .hero, .device-panel, .links {
+            position: relative;
+            z-index: 1;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .badge, .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-size: 0.68rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
         .badge {
-            display: inline-block;
-            background: rgba(63, 185, 80, 0.15);
-            color: var(--green);
-            border: 1px solid var(--green);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 16px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
         }
-        h1 { margin: 0 0 8px 0; color: #fff; }
-        p.subtitle { color: #8b949e; margin-bottom: 24px; }
-        .grid {
+
+        .status-pill {
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+        }
+
+        .badge::before, .status-pill::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: block;
+        }
+
+        .badge::before {
+            background: var(--text);
+        }
+
+        .status-pill::before {
+            background: var(--text);
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 420px minmax(0, 1fr);
+            gap: 48px;
+            align-items: center;
+            padding: 32px 0 24px;
+        }
+
+        .potato-stage {
+            position: relative;
+            min-height: 340px;
+            display: grid;
+            place-items: center;
+            border-radius: 28px;
+            background: rgba(20, 20, 20, 0.6);
+            border: 1px solid rgba(255,255,255,0.06);
+            overflow: hidden;
+        }
+
+        .potato-stage::before {
+            content: "";
+            position: absolute;
+            inset: 12% 16%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.06), rgba(255,255,255,0) 70%);
+            filter: blur(20px);
+        }
+
+        #potato-canvas {
+            width: min(100%, 340px);
+            height: 280px;
+            display: block;
+            filter: drop-shadow(0 8px 24px rgba(0,0,0,0.4));
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .eyebrow {
+            color: var(--soft);
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            font-weight: 700;
+        }
+
+        h1 {
+            margin: 0;
+            font-family: 'Ndot57Caps', 'Ndot57', 'Space Mono', 'JetBrains Mono', monospace;
+            font-size: clamp(3.2rem, 6vw, 5.2rem);
+            line-height: 0.92;
+            letter-spacing: -0.04em;
+            font-weight: 400;
+            color: var(--text);
+        }
+
+        .subtitle {
+            margin: 0;
+            max-width: 660px;
+            color: var(--muted);
+            font-size: 1.08rem;
+            line-height: 1.8;
+            font-weight: 400;
+        }
+
+        .device-panel {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 28px;
+            margin-top: 32px;
+        }
+
+        .panel {
+            background: rgba(12, 12, 12, 0.8);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 26px;
+            padding: 28px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .panel::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            color: var(--soft);
+            font-size: 0.70rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .device-toggle {
+            display: inline-flex;
+            gap: 6px;
+            padding: 4px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .toggle-btn {
+            appearance: none;
+            border: 0;
+            background: transparent;
+            color: var(--soft);
+            border-radius: 999px;
+            padding: 8px 14px;
+            font: inherit;
+            font-size: 0.70rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            font-weight: 700;
+        }
+
+        .toggle-btn.active {
+            background: rgba(255,255,255,0.15);
+            color: var(--text);
+            box-shadow: 0 2px 12px rgba(255,255,255,0.08);
+        }
+
+        .device-layout {
+            display: grid;
+            grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+            gap: 20px;
+            align-items: center;
+        }
+
+        .render-stage {
+            position: relative;
+            width: min(100%, 260px);
+            height: 400px;
+            margin: 0 auto;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(20, 20, 20, 0.5);
+            overflow: hidden;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+
+        .device-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.24s ease;
+        }
+
+        .device-image.active {
+            opacity: 1;
+        }
+
+        .spec-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            color: var(--muted);
+            font-size: 0.86rem;
+        }
+
+        .spec-item strong {
+            color: var(--text);
+            font-size: 0.98rem;
+            font-weight: 700;
+        }
+
+        .system-panel {
+            display: grid;
+            gap: 16px;
+        }
+
+        .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin: 24px 0;
-            text-align: left;
+            gap: 14px;
         }
+
         .stat-card {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            padding: 12px 16px;
-            border-radius: 8px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.03);
+            padding: 14px 14px 12px;
         }
-        .stat-label { font-size: 0.75rem; color: #8b949e; text-transform: uppercase; }
-        .stat-val { font-size: 1.1rem; font-weight: bold; color: #fff; margin-top: 4px; }
+
+        .stat-card .label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--soft);
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 700;
+        }
+
+        .stat-card .value {
+            font-size: 1.24rem;
+            font-weight: 900;
+            color: var(--text);
+        }
+
+        .bars {
+            display: grid;
+            gap: 14px;
+        }
+
+        .bar-row {
+            display: grid;
+            gap: 8px;
+        }
+
+        .bar-head {
+            display: flex;
+            justify-content: space-between;
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .bar {
+            position: relative;
+            height: 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            overflow: hidden;
+        }
+
+        .bar span {
+            display: block;
+            height: 100%;
+            width: 0;
+            border-radius: inherit;
+            background: linear-gradient(90deg, rgba(255,255,255,0.6), rgba(255,255,255,0.3));
+        }
+
+        .links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
         .links a {
-            display: inline-block;
-            margin: 8px 6px;
-            padding: 8px 16px;
-            background: #21262d;
-            color: var(--accent);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 0 18px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--text);
             text-decoration: none;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            font-size: 0.9rem;
-            transition: 0.2s;
+            font-weight: 700;
+            font-size: 0.88rem;
+            transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
         }
-        .links a:hover { background: #30363d; }
+
+        .links a:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.16);
+        }
+
+        @media (max-width: 900px) {
+            .hero, .device-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .shell { padding: 24px 18px; }
+            .topbar { justify-content: center; }
+            .device-layout { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .render-stage { height: 340px; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="badge">● LIVE HARDWARE NODE</div>
-        <h1>🥔 runsonpotato.dev</h1>
-        <p class="subtitle">A full-stack website self-hosted on a cracked Samsung S22 Ultra.</p>
-
-        <div class="grid">
-            <div class="stat-card">
-                <div class="stat-label">Host Node</div>
-                <div class="stat-val">{{ server_name }}</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">CPU Utilization</div>
-                <div class="stat-val">{{ cpu_percent }}%</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">RAM Allocation</div>
-                <div class="stat-val">{{ ram_used_gb }} / {{ ram_total_gb }} GB ({{ ram_percent }}%)</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Uptime</div>
-                <div class="stat-val">{{ uptime_hours }} hrs</div>
-            </div>
+    <div class="shell">
+        <div class="topbar">
+            <div class="badge">Live hardware node</div>
+            <div class="status-pill">Termux backend online</div>
         </div>
+
+        <section class="hero">
+            <div class="potato-stage">
+                <canvas id="potato-canvas" width="340" height="250" aria-label="Animated dot matrix potato logo"></canvas>
+            </div>
+
+            <div class="brand">
+                <div class="eyebrow">Self-hosted stack</div>
+                <h1>runsonpotato.dev</h1>
+                <p class="subtitle">
+                    A Nothing-inspired, dot-matrix potato experience running on a real Samsung Galaxy S22 Ultra via Termux, with live system telemetry streaming directly from the phone.
+                </p>
+            </div>
+        </section>
+
+        <section class="device-panel">
+            <article class="panel">
+                <div class="panel-header">
+                    <span>Samsung Galaxy S22 Ultra</span>
+                    <div class="device-toggle" aria-label="Toggle phone view">
+                        <button class="toggle-btn active" type="button" data-view="front">Front</button>
+                        <button class="toggle-btn" type="button" data-view="back">Back</button>
+                    </div>
+                </div>
+
+                <div class="device-layout">
+                    <div class="render-stage">
+                        <img class="device-image active" src="https://fdn2.gsmarena.com/vv/pics/samsung/samsung-galaxy-s22-ultra-5g-2.jpg" alt="Samsung Galaxy S22 Ultra front render" data-view="front">
+                        <img class="device-image" src="https://fdn2.gsmarena.com/vv/pics/samsung/samsung-galaxy-s22-ultra-5g-6.jpg" alt="Samsung Galaxy S22 Ultra back render" data-view="back">
+                    </div>
+
+                    <div class="spec-list">
+                        <div class="spec-item"><span>Model</span><strong>Galaxy S22 Ultra</strong></div>
+                        <div class="spec-item"><span>Chipset</span><strong>Snapdragon 8 Gen 1</strong></div>
+                        <div class="spec-item"><span>Display</span><strong>6.8" QHD+</strong></div>
+                        <div class="spec-item"><span>Memory</span><strong>12 GB RAM</strong></div>
+                        <div class="spec-item"><span>Runtime</span><strong>Android + Termux</strong></div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="panel system-panel">
+                <div class="panel-header">
+                    <span>System stats</span>
+                    <span>Live</span>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="label">Host</span>
+                        <div class="value">{{ server_name }}</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="label">CPU</span>
+                        <div class="value">{{ cpu_percent }}%</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="label">RAM</span>
+                        <div class="value">{{ ram_used_gb }} GB</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="label">Uptime</span>
+                        <div class="value">{{ uptime_hours }} hrs</div>
+                    </div>
+                </div>
+
+                <div class="bars">
+                    <div class="bar-row">
+                        <div class="bar-head"><span>Memory usage</span><span>{{ ram_percent }}%</span></div>
+                        <div class="bar"><span style="width: {{ ram_percent }}%"></span></div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-head"><span>CPU load</span><span>{{ cpu_percent }}%</span></div>
+                        <div class="bar"><span style="width: {{ cpu_percent }}%"></span></div>
+                    </div>
+                </div>
+            </article>
+        </section>
 
         <div class="links">
             <a href="/docs" target="_blank">📖 Swagger API Docs</a>
@@ -109,5 +529,93 @@
             <a href="/api/projects" target="_blank">📂 Project Index</a>
         </div>
     </div>
+
+    <script>
+        const canvas = document.getElementById('potato-canvas');
+        const ctx = canvas.getContext('2d');
+        const particles = [];
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2 + 6;
+
+        function randomBetween(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        function createPotatoDots() {
+            particles.length = 0;
+            const grid = 10;
+            for (let y = 20; y < canvas.height - 20; y += grid) {
+                for (let x = 24; x < canvas.width - 18; x += grid) {
+                    const dx = x - centerX;
+                    const dy = y - centerY;
+                    const form = (dx * dx / 105 / 105) + (dy * dy / 90 / 90);
+                    if (form <= 1.05) {
+                        particles.push({
+                            x,
+                            y,
+                            size: randomBetween(2.2, 4.0),
+                            seed: Math.random() * Math.PI * 2,
+                            glow: Math.random() > 0.85 ? '#ffffff' : '#e0e0e0',
+                            alpha: randomBetween(0.55, 1.0)
+                        });
+                    }
+                }
+            }
+        }
+
+        function drawPotato() {
+            const t = performance.now() * 0.0015;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const halo = ctx.createRadialGradient(centerX, centerY, 20, centerX, centerY, 160);
+            halo.addColorStop(0, 'rgba(255,255,255,0.08)');
+            halo.addColorStop(0.45, 'rgba(255,255,255,0.02)');
+            halo.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = halo;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (const dot of particles) {
+                const pulse = Math.sin(t * 2.3 + dot.seed) * 0.9;
+                const dx = dot.x - centerX;
+                const dy = dot.y - centerY;
+                const dist = Math.hypot(dx, dy);
+                const glow = Math.max(0, 1 - dist / 180);
+                const r = dot.size + pulse * 0.7;
+
+                ctx.beginPath();
+                ctx.fillStyle = dot.glow === '#ffffff'
+                    ? `rgba(255,255,255,${dot.alpha + glow * 0.18})`
+                    : `rgba(224,224,224,${dot.alpha + glow * 0.12})`;
+                ctx.arc(dot.x, dot.y, r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.ellipse(centerX, centerY + 8, 116, 87, 0.18, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        createPotatoDots();
+        function animate() {
+            drawPotato();
+            requestAnimationFrame(animate);
+        }
+        requestAnimationFrame(animate);
+
+        const buttons = document.querySelectorAll('.toggle-btn');
+        const deviceImages = document.querySelectorAll('.device-image');
+
+        buttons.forEach((button) => {
+            button.addEventListener('click', () => {
+                const selectedView = button.dataset.view;
+                buttons.forEach(btn => btn.classList.toggle('active', btn === button));
+                deviceImages.forEach(img => {
+                    img.classList.toggle('active', img.dataset.view === selectedView);
+                });
+            });
+        });
+    </script>
 </body>
 </html>

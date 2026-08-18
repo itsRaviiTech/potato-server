@@ -1,10 +1,14 @@
 from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 import psutil
 import datetime
 
 app = FastAPI(title="Potato Server")
+
+# This tells FastAPI to serve the "fonts" folder at the "/fonts" URL path
+app.mount("/fonts", StaticFiles(directory="fonts"), name="fonts")
 
 # Point Jinja2 to the "templates" folder
 templates = Jinja2Templates(directory="templates")
