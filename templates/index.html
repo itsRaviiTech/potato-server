@@ -4,329 +4,212 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RAVI // RUNSONPOTATO.DEV</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #000000;
             --surface: #0a0a0a;
             --border: #1a1a1a;
-            --text-main: #ffffff;
-            --text-muted: #666666;
             --nothing-red: #ff0000;
-            --accent: #ffffff;
+            --text-main: #ffffff;
+            --text-muted: #888888;
         }
 
-        @font-face {
-            font-family: 'Ndot57';
-            src: url('/fonts/Ndot57-Regular.otf') format('opentype');
-        }
+        @font-face { font-family: 'Ndot'; src: url('/fonts/Ndot57-Regular.otf'); }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-
-        body {
-            background-color: var(--bg);
-            background-image: radial-gradient(circle, #151515 1px, transparent 1px);
-            background-size: 24px 24px;
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
+        body { 
+            background: var(--bg); 
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif; 
+            line-height: 1.6;
         }
 
-        .dot-matrix { font-family: 'Ndot57', 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 1px; }
+        .dot-matrix { font-family: 'Ndot', monospace; text-transform: uppercase; letter-spacing: 1px; }
+        .mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--nothing-red); }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 60px 24px; }
 
-        /* --- HEADER --- */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 60px;
-        }
+        /* --- 1. IDENTITY HEADER --- */
+        .header-section { margin-bottom: 100px; border-bottom: 1px solid var(--border); padding-bottom: 60px; }
+        .header-section h1 { font-size: clamp(3rem, 10vw, 6rem); margin-bottom: 20px; }
+        .intro-text { font-size: 18px; color: var(--text-muted); max-width: 800px; }
+        .intro-text b { color: white; font-weight: 600; }
 
-        .nav-links { display: flex; gap: 30px; }
-        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 12px; transition: 0.3s; }
-        .nav-links a:hover { color: var(--text-main); }
-
-        .live-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 10px;
-            background: rgba(255,0,0,0.1);
-            color: var(--nothing-red);
-            padding: 4px 12px;
-            border-radius: 99px;
-            border: 1px solid rgba(255,0,0,0.2);
-        }
-
-        .pulse {
-            width: 6px; height: 6px; background: var(--nothing-red); border-radius: 50%;
-            animation: pulse-animation 2s infinite;
-        }
-
-        /* --- HERO SECTION --- */
-        .hero {
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 80px;
-            align-items: center;
-            min-height: 70vh;
-        }
-
-        .hero-text h1 { font-size: clamp(3rem, 7vw, 5.5rem); line-height: 0.85; margin-bottom: 30px; }
-        .hero-text p { font-size: 18px; color: var(--text-muted); max-width: 500px; margin-bottom: 40px; line-height: 1.6; }
-        .hero-text b { color: var(--text-main); font-weight: 600; }
-
-        /* --- THE S22 ULTRA 3D RENDER (CSS) --- */
-        .device-stage {
-            perspective: 1000px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .phone-3d {
-            width: 280px;
-            height: 580px;
-            background: #111;
-            border-radius: 40px;
-            border: 6px solid #1a1a1a;
-            position: relative;
-            transform: rotateY(-20deg) rotateX(10deg);
-            box-shadow: 20px 20px 50px rgba(0,0,0,0.5);
-            transition: 0.5s;
-        }
-
-        .phone-3d:hover { transform: rotateY(-5deg) rotateX(5deg); }
-
-        .phone-screen {
-            position: absolute;
-            inset: 8px;
-            background: #050505;
-            border-radius: 32px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        /* THE VOID EFFECT */
-        .the-void {
-            position: absolute;
-            top: 0; right: 0;
-            width: 60%; height: 100%;
-            background: #000;
-            z-index: 10;
-            clip-path: polygon(30% 0, 100% 0, 100% 100%, 0% 100%, 20% 50%);
-            box-shadow: inset 20px 0 40px rgba(0,0,0,0.9);
-        }
-
-        .void-text {
-            position: absolute;
-            left: 20px; bottom: 40px;
-            font-size: 10px; color: var(--text-muted);
-            transform: rotate(-90deg);
-            transform-origin: left;
-            z-index: 11;
-        }
-
-        /* --- STATS GRID --- */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
+        /* --- 2. THE SERVER SECTION --- */
+        .server-grid { 
+            display: grid; 
+            grid-template-columns: 1.2fr 0.8fr; 
+            gap: 40px; 
+            align-items: center; 
             margin-bottom: 100px;
-        }
-
-        .stat-card {
             background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 24px;
-            border-radius: 24px;
-        }
-
-        .stat-label { font-size: 10px; color: var(--text-muted); margin-bottom: 10px; display: block; }
-        .stat-value { font-size: 24px; font-weight: 700; }
-
-        /* --- RESUME SECTIONS --- */
-        .section-title { font-size: 32px; margin-bottom: 40px; border-left: 4px solid var(--nothing-red); padding-left: 20px; }
-
-        .exp-grid { display: grid; gap: 30px; margin-bottom: 80px; }
-        
-        .exp-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
+            border-radius: 40px;
             padding: 40px;
-            border-radius: 32px;
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            gap: 40px;
-        }
-
-        .exp-meta h3 { font-size: 18px; margin-bottom: 5px; }
-        .exp-meta p { color: var(--text-muted); font-size: 14px; }
-        .exp-content h4 { color: var(--nothing-red); font-size: 12px; margin-bottom: 15px; letter-spacing: 1px; }
-        .exp-content ul { color: var(--text-muted); list-style: none; font-size: 15px; }
-        .exp-content li { margin-bottom: 10px; position: relative; padding-left: 20px; }
-        .exp-content li::before { content: "•"; position: absolute; left: 0; color: white; }
-
-        .skills-tag-cloud {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .skill-tag {
-            background: #111;
             border: 1px solid var(--border);
-            padding: 8px 16px;
-            border-radius: 99px;
-            font-size: 13px;
         }
 
-        footer { text-align: center; padding: 100px 0; color: var(--text-muted); font-size: 12px; }
+        .three-d-wrapper {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            border-radius: 20px;
+            overflow: hidden;
+            pointer-events: none; /* DISABLE USER TOUCH/INPUT */
+        }
 
-        @keyframes pulse-animation { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        .three-d-wrapper iframe { width: 100%; height: 100%; border: none; }
+
+        .specs-box h2 { font-size: 24px; margin-bottom: 20px; }
+        .spec-item { 
+            display: flex; justify-content: space-between; 
+            padding: 12px 0; border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+        .spec-item span:last-child { color: var(--text-muted); }
+
+        /* --- 3. ORIGIN STORY --- */
+        .origin-section { margin-bottom: 120px; text-align: center; max-width: 700px; margin-left: auto; margin-right: auto; }
+        .origin-section h2 { font-size: 32px; margin-bottom: 24px; }
+
+        /* --- 4. EXPERIENCE SECTION --- */
+        .experience-card { margin-bottom: 80px; }
+        .company-header { display: flex; align-items: center; gap: 20px; margin-bottom: 25px; }
+        .company-logo { width: 60px; height: 60px; background: #222; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+        
+        /* SLICK-STYLE COLLAGE (CSS SCROLL SNAP) */
+        .collage-container {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 20px;
+            scrollbar-width: none; /* Hide scrollbar Firefox */
+        }
+        .collage-container::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome/Safari */
+
+        .collage-item {
+            flex: 0 0 350px;
+            height: 250px;
+            background: #111;
+            border-radius: 20px;
+            scroll-snap-align: start;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        .collage-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; transition: 0.3s; }
+        .collage-item:hover img { opacity: 1; }
+
+        .job-details { margin-top: 20px; list-style: none; color: var(--text-muted); font-size: 15px; }
+        .job-details li { margin-bottom: 8px; padding-left: 20px; position: relative; }
+        .job-details li::before { content: "→"; position: absolute; left: 0; color: var(--nothing-red); }
 
         @media (max-width: 900px) {
-            .hero, .exp-card { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: 1fr 1fr; }
-            .hero-text { order: 2; text-align: center; }
-            .device-stage { order: 1; margin-bottom: 40px; }
+            .server-grid { grid-template-columns: 1fr; }
+            .collage-item { flex: 0 0 280px; }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <nav>
-            <div class="dot-matrix" style="font-size: 18px;">Ravi // dev</div>
-            <div class="nav-links dot-matrix">
-                <a href="#experience">Experience</a>
-                <a href="#projects">Projects</a>
-                <a href="/api/health">System API</a>
-            </div>
-            <div class="live-badge dot-matrix">
-                <div class="pulse"></div> S22 ULTRA ONLINE
-            </div>
-        </nav>
-
-        <section class="hero">
-            <div class="hero-text">
-                <h1 class="dot-matrix">Engineering<br>Through<br>The Void.</h1>
+        
+        <!-- IDENTITY HEADER -->
+        <header class="header-section">
+            <span class="mono">// PERSONAL_DOSSIER_v1.0</span>
+            <h1 class="dot-matrix">RAVI // DEV</h1>
+            <div class="intro-text">
                 <p>
-                    I'm <b>Ravi</b>, a Software Engineer & Game Developer based in Malaysia. 
-                    I build high-performance systems and AI modules while my own hardware 
-                    literally falls apart. 
+                    Passionate <b>Software Engineer</b> and <b>Digital Artist</b> with a focus on bridging backend architecture and AI algorithms. 
+                    I'm actively expanding my expertise in <b>Artificial Intelligence</b> by engineering custom Levenshtein distance algorithms, 
+                    smart data imputation, and confidence-scoring modules to optimize enterprise systems.
                     <br><br>
-                    Currently hosting this portfolio on a <b>Samsung S22 Ultra</b> that's 50% screen, 50% pure black void.
+                    Recognized as a <b>"Company MVP"</b> for delivering production-ready applications under high-pressure deadlines.
                 </p>
-                <div class="skills-tag-cloud">
-                    <span class="skill-tag">Python</span>
-                    <span class="skill-tag">Java</span>
-                    <span class="skill-tag">C# (Unity)</span>
-                    <span class="skill-tag">AI/ML</span>
-                    <span class="skill-tag">IoT</span>
-                </div>
             </div>
+        </header>
 
-            <div class="device-stage">
-                <div class="phone-3d">
-                    <div class="phone-screen">
-                        <div class="the-void"></div>
-                        <div class="void-text dot-matrix">LCD_FAILURE_OLED_BLEED</div>
-                        
-                        <div class="dot-matrix" style="font-size: 10px; margin-bottom: 20px;">SYSTEM MONITOR</div>
-                        <div style="font-size: 40px; font-weight: 800;">{{ cpu_percent }}%</div>
-                        <div class="dot-matrix" style="font-size: 10px; color: var(--text-muted);">CPU LOAD</div>
-                    </div>
-                </div>
+        <!-- SERVER VALIDATION (3D + SPECS) -->
+        <section class="server-grid">
+            <div class="three-d-wrapper">
+                <iframe title="S22 Ultra Render" 
+                        src="https://sketchfab.com/models/53670c18f4d646f2b9bcc0279e06e299/embed?autostart=1&autospin=0.3&preload=1&transparent=1&ui_hint=0&ui_theme=dark&ui_controls=0&ui_infos=0" 
+                        allow="autoplay; fullscreen;">
+                </iframe>
+            </div>
+            <div class="specs-box">
+                <h2 class="dot-matrix">The Server</h2>
+                <div class="spec-item"><span>Model</span><span>Samsung S22 Ultra</span></div>
+                <div class="spec-item"><span>Status</span><span style="color:var(--nothing-red)">50% Pixels / 100% Willpower</span></div>
+                <div class="spec-item"><span>CPU Load</span><span>{{ cpu_percent }}%</span></div>
+                <div class="spec-item"><span>RAM Used</span><span>{{ ram_used_gb }} GB</span></div>
+                <div class="spec-item"><span>Uptime</span><span>{{ uptime_hours }} Hours</span></div>
             </div>
         </section>
 
-        <!-- LIVE TELEMETRY -->
-        <div class="stats-grid dot-matrix">
-            <div class="stat-card">
-                <span class="stat-label">Memory</span>
-                <div class="stat-value">{{ ram_used_gb }}GB</div>
-            </div>
-            <div class="stat-card">
-                <span class="stat-label">Temp</span>
-                <div class="stat-value">42°C</div>
-            </div>
-            <div class="stat-card">
-                <span class="stat-label">Uptime</span>
-                <div class="stat-value">{{ uptime_hours }}h</div>
-            </div>
-            <div class="stat-card">
-                <span class="stat-label">Node</span>
-                <div class="stat-value" style="font-size: 14px;">Termux/S22U</div>
-            </div>
-        </div>
+        <!-- ORIGIN STORY -->
+        <section class="origin-section">
+            <span class="mono">// THE_NAME_CONVENTION</span>
+            <h2 class="dot-matrix">Why runsonpotato.dev?</h2>
+            <p style="color: var(--text-muted);">
+                In the dev world, a "potato" is a low-spec machine struggling to keep up. 
+                My server is quite literally a potato—a shattered S22 Ultra with a bleeding LCD and a display that is 50% "the void." 
+                It runs this entire stack 24/7. This domain is a tribute to resourcefulness: 
+                <b>the best code doesn't need a supercomputer; it just needs a heart.</b>
+            </p>
+        </section>
 
-        <!-- EXPERIENCE -->
-        <h2 id="experience" class="section-title dot-matrix">Professional Experience</h2>
-        <div class="exp-grid">
-            <div class="exp-card">
-                <div class="exp-meta">
-                    <h3 class="dot-matrix">Univrse Interactive</h3>
-                    <p>Multimedia Developer</p>
-                    <p>Mar 2023 — Aug 2023</p>
+        <!-- EXPERIENCE SECTION -->
+        <section>
+            <h2 class="dot-matrix" style="margin-bottom: 50px;">Past_Experiences</h2>
+
+            <!-- UNIVRSE INTERACTIVE -->
+            <div class="experience-card">
+                <div class="company-header">
+                    <div class="company-logo">LOGO</div>
+                    <div>
+                        <h3 class="dot-matrix">Univrse Interactive</h3>
+                        <p class="mono">Multimedia Dev & Assistant PM // 2023</p>
+                    </div>
                 </div>
-                <div class="exp-content">
-                    <h4 class="dot-matrix">HIGH-STAKES DEPLOYMENT</h4>
-                    <ul>
-                        <li>Sole developer for a 5-day VR build for FELDA 2023, personally used by the <b>Prime Minister of Malaysia</b>.</li>
-                        <li>Lead Developer for core game prototyping and Firebase backend architecture.</li>
-                        <li>Awarded <b>"Company MVP"</b> for technical leadership and fast-paced delivery.</li>
-                    </ul>
+                <div class="collage-container">
+                    <div class="collage-item"><img src="https://via.placeholder.com/400x300?text=Project+View+1" alt="Work"></div>
+                    <div class="collage-item"><img src="https://via.placeholder.com/400x300?text=Project+View+2" alt="Work"></div>
+                    <div class="collage-item"><img src="https://via.placeholder.com/400x300?text=Project+View+3" alt="Work"></div>
                 </div>
+                <ul class="job-details">
+                    <li>Spearheaded end-to-end mobile app stabilization and debugging.</li>
+                    <li>Developed custom VR showcase for the Prime Minister of Malaysia (5-day sprint).</li>
+                    <li>Awarded "Company MVP" for technical leadership.</li>
+                </ul>
             </div>
 
-            <div class="exp-card">
-                <div class="exp-meta">
-                    <h3 class="dot-matrix">Hezmedia Interactive</h3>
-                    <p>Game Developer (Intern)</p>
-                    <p>Oct 2022 — Mar 2023</p>
+            <!-- HEZMEDIA -->
+            <div class="experience-card">
+                <div class="company-header">
+                    <div class="company-logo">LOGO</div>
+                    <div>
+                        <h3 class="dot-matrix">Hezmedia Interactive</h3>
+                        <p class="mono">Game Developer (Intern) // 2022</p>
+                    </div>
                 </div>
-                <div class="exp-content">
-                    <h4 class="dot-matrix">BACKEND & QA</h4>
-                    <ul>
-                        <li>Engineered secure user login data flows for the main corporate application.</li>
-                        <li>Deployed VR hardware infrastructure on-site in Sarawak for ESTCON 2022.</li>
-                    </ul>
+                <div class="collage-container">
+                    <div class="collage-item"><img src="https://via.placeholder.com/400x300?text=Internship+View+1" alt="Work"></div>
+                    <div class="collage-item"><img src="https://via.placeholder.com/400x300?text=Internship+View+2" alt="Work"></div>
                 </div>
+                <ul class="job-details">
+                    <li>Engineered backend architecture for secure corporate user data flows.</li>
+                    <li>Managed remote hardware calibration and deployment for ESTCON 2022.</li>
+                </ul>
             </div>
-        </div>
 
-        <!-- PROJECTS -->
-        <h2 id="projects" class="section-title dot-matrix">Selected Projects</h2>
-        <div class="exp-grid">
-            <div class="exp-card">
-                <div class="exp-meta">
-                    <h3 class="dot-matrix">R-VIS System</h3>
-                    <p>Java, IoT, AI</p>
-                </div>
-                <div class="exp-content">
-                    <h4 class="dot-matrix">AI DATA VALIDATION</h4>
-                    <ul>
-                        <li>99% accuracy in automated error detection using custom Levenshtein algorithms.</li>
-                        <li>Achieved a <b>2,000x improvement</b> in data processing speed (3 weeks down to 10 mins).</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        </section>
 
-        <footer class="dot-matrix">
-            RAVI // {{ server_name }} // MADE WITH SPIRIT AND BROKEN GLASS.
+        <footer style="padding: 100px 0; text-align: center; border-top: 1px solid var(--border);" class="mono">
+            RAVI // S22_ULTRA_BACKEND // [MADE_IN_MALAYSIA]
         </footer>
+
     </div>
 
 </body>
