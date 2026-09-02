@@ -3,41 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Server Offline — Nothing to See</title>
+    <title>(00) — NOTHING RUNNING</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Silkscreen&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
     <style>
+        :root {
+            --bg: #000000;
+            --pure-white: #ffffff;
+            --dim-white: rgba(255, 255, 255, 0.4);
+            --border-dim: rgba(255, 255, 255, 0.12);
+            --red-led: #ff2a2a;
+            --font-matrix: 'Silkscreen', monospace;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            background-color: #0a0c10;
-            color: #f0f6fc;
-            font-family: monospace;
+            background-color: var(--bg);
+            color: var(--pure-white);
+            font-family: var(--font-mono);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 32px 24px;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 0);
+            background-size: 24px 24px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Industrial Metadata Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--dim-white);
+            border-bottom: 1px dashed var(--border-dim);
+            padding-bottom: 16px;
+        }
+
+        .header-tag {
             display: flex;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
-            padding: 20px;
+            gap: 8px;
         }
-        .container {
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(18, 22, 31, 0.85);
-            padding: 40px;
-            border-radius: 16px;
-            max-width: 500px;
+
+        /* Pulsing Red Indicator LED */
+        .led-indicator {
+            width: 7px;
+            height: 7px;
+            background-color: var(--red-led);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--red-led);
+            animation: pulse 1.2s infinite ease-in-out;
         }
-        h1 { font-size: 24px; color: #ff7b72; }
-        p { color: #8b949e; font-size: 14px; line-height: 1.6; }
-        .battery { font-size: 40px; margin-bottom: 10px; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        /* Central Nothing-OS Card */
+        main {
+            max-width: 580px;
+            margin: 60px auto;
+            width: 100%;
+        }
+
+        .os-badge {
+            font-family: var(--font-matrix);
+            font-size: 11px;
+            letter-spacing: 0.2em;
+            color: var(--dim-white);
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-family: var(--font-matrix);
+            font-size: clamp(32px, 6vw, 54px);
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            line-height: 1.05;
+            margin-bottom: 36px;
+            text-transform: uppercase;
+        }
+
+        /* Matrix Spec Sheet Grid */
+        .spec-box {
+            border: 1px solid var(--border-dim);
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(8px);
+            margin-bottom: 32px;
+        }
+
+        .spec-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            letter-spacing: 0.05em;
+        }
+
+        .spec-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .spec-label {
+            color: var(--dim-white);
+            text-transform: uppercase;
+        }
+
+        .spec-value {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            color: var(--pure-white);
+        }
+
+        /* Glyph Battery Status */
+        .battery-glyph {
+            font-family: var(--font-matrix);
+            color: var(--red-led);
+            font-size: 13px;
+        }
+
+        /* Humorous Deadpan Copy */
+        .narrative {
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--dim-white);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .narrative b {
+            color: var(--pure-white);
+            font-weight: 700;
+        }
+
+        /* Industrial Footer */
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            color: var(--dim-white);
+            border-top: 1px dashed var(--border-dim);
+            padding-top: 16px;
+            text-transform: uppercase;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .tape-label {
+            border: 1px solid var(--pure-white);
+            padding: 2px 6px;
+            color: var(--pure-white);
+            font-weight: 700;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 20px 16px; }
+            .spec-box { padding: 18px; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="battery">🪫</div>
-        <h1>Origin Server is Dead (Literally)</h1>
-        <p>The developer is using a Samsung Galaxy S22 Ultra as the dataserver, didn't dock it, and forgot to charge it.</p>
-        <p>Current Status: <b>0% Battery</b></p>
-        <p style="font-size: 12px; margin-top: 20px;">
-            Check back once the host finds a USB-C cable.
+
+    <header>
+        <div class="header-tag">
+            <span class="led-indicator"></span>
+            <span>(SYS_DOWN)</span>
+        </div>
+        <div>LOC_HOST // S22_ULTRA</div>
+    </header>
+
+    <main>
+        <div class="os-badge">[ NOTHING_OS // 00 ]</div>
+        <h1>(NOTHING)<br>TO SEE HERE.</h1>
+
+        <div class="spec-box">
+            <div class="spec-row">
+                <span class="spec-label">DATASERVER HARDWARE</span>
+                <span class="spec-value">SAMSUNG S22 ULTRA (12GB)</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">ENERGY STATE</span>
+                <span class="spec-value battery-glyph">[ 00% // DEPLETED ]</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">COOLING INFRASTRUCTURE</span>
+                <span class="spec-value">COLD BEDROOM DESK</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">ROOT CAUSE</span>
+                <span class="spec-value">DEVELOPER NEGLECT</span>
+            </div>
+        </div>
+
+        <p class="narrative">
+            THIS DOMAIN DOES NOT RUN ON AWS, CLOUDFLARE EDGE, OR A LIQUID-COOLED RACK. 
+            IT RUNS ON A HANDHELD SMARTPHONE. THE HOST REFUSES TO LEAVE IT WIRED TO A 45W BRICK, 
+            FORGOT TO RECHARGE IT, AND IT HAS SURRENDERED TO THE VOID.
+            <br><br>
+            THE SERVICE WILL RESUME WHEN A <b>USB-C CABLE</b> IS LOCATED.
         </p>
-    </div>
+    </main>
+
+    <footer>
+        <div>DESIGNED (BY ACCIDENT) IN MALAYSIA</div>
+        <div class="tape-label">OUT OF JUICE</div>
+        <div>REF: ERR_BATTERY_DEAD_00</div>
+    </footer>
+
 </body>
 </html>
