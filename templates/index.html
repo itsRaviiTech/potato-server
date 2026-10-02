@@ -58,7 +58,9 @@
             overflow: hidden;
             pointer-events: none; /* DISABLE USER TOUCH/INPUT */
         }
-        .three-d-wrapper iframe { width: 100%; height: 100%; border: none; }
+        /* iframe is taller than the wrapper; the wrapper's overflow:hidden crops Sketchfab's
+           title bar (top) and button row / logo (bottom), whatever the embed params do */
+        .three-d-wrapper iframe { position: absolute; left: 0; top: -75px; width: 100%; height: calc(100% + 150px); border: none; }
 
         .specs-box h2 { font-size: 24px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
         .live { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; letter-spacing: 0; text-transform: none; }
@@ -346,7 +348,14 @@
             ui_watermark: 0,
             ui_watermark_link: 0,
             ui_theme: 'dark',
-            success: function (api) { api.start(); }
+            success: function (api) {
+                api.start();
+                api.addEventListener('viewerready', function () {
+                    // with interaction off there is nothing to hint at, so the
+                    // "click & hold to rotate" overlay is never shown
+                    if (api.setUserInteraction) api.setUserInteraction(false);
+                });
+            }
         });
     })();
     </script>
