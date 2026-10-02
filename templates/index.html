@@ -58,9 +58,12 @@
             overflow: hidden;
             pointer-events: none; /* DISABLE USER TOUCH/INPUT */
         }
-        /* iframe is taller than the wrapper; the wrapper's overflow:hidden crops Sketchfab's
-           title bar (top) and button row / logo (bottom), whatever the embed params do */
-        .three-d-wrapper iframe { position: absolute; left: 0; top: -75px; width: 100%; height: calc(100% + 150px); border: none; }
+        /* The iframe is much taller than its clipped wrapper (--over extra px above AND below).
+           Sketchfab's title bar, buttons, logo and the "click & hold to rotate" hint all sit near
+           the iframe's edges / lower middle, so they land outside the visible window.
+           The JS below zooms the camera out to compensate for the bigger viewport. */
+        .three-d-wrapper { --over: 375px; }
+        .three-d-wrapper iframe { position: absolute; left: 0; top: calc(-1 * var(--over)); width: 100%; height: calc(100% + 2 * var(--over)); border: none; }
 
         .specs-box h2 { font-size: 24px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
         .live { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; letter-spacing: 0; text-transform: none; }
@@ -351,9 +354,19 @@
             success: function (api) {
                 api.start();
                 api.addEventListener('viewerready', function () {
-                    // with interaction off there is nothing to hint at, so the
-                    // "click & hold to rotate" overlay is never shown
-                    if (api.setUserInteraction) api.setUserInteraction(false);
+                    var ZOOM_TWEAK = 1.0;   // phone too big? raise it (1.2). too small? lower it (0.8)
+                    var frame = document.getElementById('sketchfab-frame');
+                    // the taller iframe makes Sketchfab frame the model bigger, so move the camera back by the same ratio
+                    var k = (frame.clientHeight / frame.parentElement.clientHeight) * ZOOM_TWEAK;
+                    api.getCameraLookAt(function (err, cam) {
+                        if (err) return;
+                        var p = cam.position, t = cam.target;
+                        api.setCameraLookAt([
+                            t[0] + (p[0] - t[0]) * k,
+                            t[1] + (p[1] - t[1]) * k,
+                            t[2] + (p[2] - t[2]) * k
+                        ], t, 0);
+                    });
                 });
             }
         });
