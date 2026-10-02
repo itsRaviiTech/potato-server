@@ -2,76 +2,23 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-import psutil
+import os
+import time
 import datetime
+import psutil
 
 app = FastAPI(title="Potato Server")
 
-# This tells FastAPI to serve the "fonts" folder at the "/fonts" URL path
 app.mount("/fonts", StaticFiles(directory="fonts"), name="fonts")
-
-# Point Jinja2 to the "templates" folder
 templates = Jinja2Templates(directory="templates")
 
 
 # -------------------------------------------------------------
-# 1. SERVER-SIDE RENDERED HOMEPAGE
+# STATS HELPERS (Android/Termux blocks /proc/stat)
 # -------------------------------------------------------------
-@app.get("/", response_class=HTMLResponse)
-async def home(request: Request):
-    # Read live machine stats (works on PC & Android Termux)
-    ram = psutil.virtual_memory()
-    cpu_percent = psutil.cpu_percent(interval=None)
-    uptime_seconds = int(datetime.datetime.now().timestamp() - psutil.boot_time())
-    uptime_hours = round(uptime_seconds / 3600, 1)
-
-    context = {
-        "request": request,
-        "server_name": "Potato Node 01 (Samsung S22 Ultra)",
-        "ram_used_gb": round(ram.used / (1024**3), 2),
-        "ram_total_gb": round(ram.total / (1024**3), 2),
-        "ram_percent": ram.percent,
-        "cpu_percent": cpu_percent,
-        "uptime_hours": uptime_hours,
-    }
-    return templates.TemplateResponse(request=request, name="index.html", context=context)
-
-
-# -------------------------------------------------------------
-# 2. REST API ENDPOINTS (For your external tools / RAG)
-# -------------------------------------------------------------
-@app.get("/api/health")
-async def health_check():
-    return {
-        "status": "healthy",
-        "node": "s22-ultra-junkbox",
-        "timestamp": datetime.datetime.utcnow().isoformat()
-    }
-
-@app.get("/api/projects")
-async def list_projects():
-    # Mock data representing your active projects
-    return [
-        {
-            "id": "rag-system",
-            "name": "RAG From Scratch",
-            "url": "https://rag.runsonpotato.dev",
-            "description": "Custom retrieval-augmented generation engine."
-        },
-        {
-            "id": "nothingness",
-            "name": "Nothingness",
-            "url": "https://nothingness.runsonpotato.dev",
-            "description": "Literally nothing. A peaceful waste of time."
-        }
-    ]
-
-#provided by claude
-
-import os, time, datetime, psutil
-
 NCPU = os.cpu_count() or 8
 _system_cpu_ok = True
+
 
 def cpu_percent_safe():
     global _system_cpu_ok
@@ -79,7 +26,8 @@ def cpu_percent_safe():
         try:
             return psutil.cpu_percent(interval=None)
         except (PermissionError, OSError):
-            _system_cpu_ok = False          # Android blocks /proc/stat
+            _system_cpu_ok = False  # Android blocks /proc/stat
+
     # Fallback: add up CPU use of every process Termux lets us see
     total = 0.0
     for p in psutil.process_iter():
@@ -89,23 +37,36 @@ def cpu_percent_safe():
             continue
     return round(min(100.0, total / NCPU), 1)
 
+
 def uptime_hours():
     try:
-        return round(time.clock_gettime(time.CLOCK_BOOTTIME) / 3600, 1)  # no /proc access needed
+        return round(time.clock_gettime(time.CLOCK_BOOTTIME) / 3600, 1)
     except Exception:
-        return round((time.time() - psutil.boot_time()) / 3600, 1)
+        try:
+            return round((time.time() - psutil.boot_time()) / 3600, 1)
+        except Exception:
+            return 0.0
+
 
 def read_stats():
-    ram = psutil.virtual_memory()
-    used = ram.total - ram.available
+    try:
+        ram = psutil.virtual_memory()
+        total_b, used_b = ram.total, ram.total - ram.available
+    except (PermissionError, OSError):
+        total_b, used_b = 12 * 1024**3, 0  # placeholder if /proc/meminfo is blocked too
+
     return {
         "cpu_percent": cpu_percent_safe(),
-        "ram_used_gb": round(used / (1024**3), 2),
-        "ram_total_gb": round(ram.total / (1024**3), 2),
-        "ram_percent": round(used / ram.total * 100, 1),
+        "ram_used_gb": round(used_b / (1024**3), 2),
+        "ram_total_gb": round(total_b / (1024**3), 2),
+        "ram_percent": round(used_b / total_b * 100, 1),
         "uptime_hours": uptime_hours(),
     }
 
+
+# -------------------------------------------------------------
+# 1. SERVER-SIDE RENDERED HOMEPAGE
+# -------------------------------------------------------------
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     context = {
@@ -115,6 +76,37 @@ async def home(request: Request):
     }
     return templates.TemplateResponse(request=request, name="index.html", context=context)
 
+
+# -------------------------------------------------------------
+# 2. REST API ENDPOINTS
+# -------------------------------------------------------------
 @app.get("/api/stats")
 async def stats():
-    return read_stats()  
+    return read_stats()
+
+
+@app.get("/api/health")
+async def health_check():
+    return {
+        "status": "healthy",
+        "node": "s22-ultra-junkbox",
+        "timestamp": datetime.datetime.utcnow().isoformat(),
+    }
+
+
+@app.get("/api/projects")
+async def list_projects():
+    return [
+        {
+            "id": "rag-system",
+            "name": "RAG From Scratch",
+            "url": "https://rag.runsonpotato.dev",
+            "description": "Custom retrieval-augmented generation engine.",
+        },
+        {
+            "id": "nothingness",
+            "name": "Nothingness",
+            "url": "https://nothingness.runsonpotato.dev",
+            "description": "Literally nothing. A peaceful waste of time.",
+        },
+    ]
