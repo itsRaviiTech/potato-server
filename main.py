@@ -65,3 +65,56 @@ async def list_projects():
             "description": "Literally nothing. A peaceful waste of time."
         }
     ]
+
+#provided by claude
+
+import os, time, datetime, psutil
+
+NCPU = os.cpu_count() or 8
+_system_cpu_ok = True
+
+def cpu_percent_safe():
+    global _system_cpu_ok
+    if _system_cpu_ok:
+        try:
+            return psutil.cpu_percent(interval=None)
+        except (PermissionError, OSError):
+            _system_cpu_ok = False          # Android blocks /proc/stat
+    # Fallback: add up CPU use of every process Termux lets us see
+    total = 0.0
+    for p in psutil.process_iter():
+        try:
+            total += p.cpu_percent(interval=None)
+        except (psutil.Error, OSError):
+            continue
+    return round(min(100.0, total / NCPU), 1)
+
+def uptime_hours():
+    try:
+        return round(time.clock_gettime(time.CLOCK_BOOTTIME) / 3600, 1)  # no /proc access needed
+    except Exception:
+        return round((time.time() - psutil.boot_time()) / 3600, 1)
+
+def read_stats():
+    ram = psutil.virtual_memory()
+    used = ram.total - ram.available
+    return {
+        "cpu_percent": cpu_percent_safe(),
+        "ram_used_gb": round(used / (1024**3), 2),
+        "ram_total_gb": round(ram.total / (1024**3), 2),
+        "ram_percent": round(used / ram.total * 100, 1),
+        "uptime_hours": uptime_hours(),
+    }
+
+@app.get("/", response_class=HTMLResponse)
+async def home(request: Request):
+    context = {
+        "request": request,
+        "server_name": "Potato Node 01 (Samsung S22 Ultra)",
+        **read_stats(),
+    }
+    return templates.TemplateResponse(request=request, name="index.html", context=context)
+
+@app.get("/api/stats")
+async def stats():
+    return read_stats()  
