@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RAVI // RUNSONPOTATO.DEV</title>
+    <script>
+        /* play the boot animation once per browser session, skip it for reduced-motion users */
+        try {
+            if (!sessionStorage.getItem('booted') && !window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+                document.documentElement.classList.add('boot-on');
+        } catch (e) {}
+        /* failsafe: whatever happens, never leave the page stuck behind the overlay */
+        setTimeout(function () { document.documentElement.classList.remove('boot-on'); }, 10000);
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -143,6 +152,35 @@
             .repo-grid { grid-template-columns: 1fr; }
         }
 
+        /* --- 0. OPENING ANIMATION --- */
+        #boot { display: none; }
+        html.boot-on #boot {
+            display: flex; position: fixed; inset: 0; z-index: 9999; background: #000;
+            flex-direction: column; align-items: center; justify-content: center; gap: 30px;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+        html.boot-on #boot.done { opacity: 0; visibility: hidden; pointer-events: none; }
+        html.boot-on:not(.ready), html.boot-on:not(.ready) body { overflow: hidden; }
+        .boot-title { font-size: clamp(2.2rem, 9vw, 5rem); min-height: 1.2em; color: #fff; }
+        .boot-title .caret { color: var(--nothing-red); animation: blink 0.8s steps(2) infinite; }
+        .boot-log { width: min(360px, 80vw); font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-muted); min-height: 5.6em; }
+        .boot-log div { opacity: 0; transition: opacity 0.3s; }
+        .boot-log div.show { opacity: 1; }
+        .boot-log em { font-style: normal; color: var(--nothing-red); }
+        #boot .segments { width: min(360px, 80vw); }
+        .boot-skip { position: absolute; bottom: 28px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #444; letter-spacing: 2px; }
+
+        /* page sections fade up one after another once the overlay lifts */
+        html.boot-on .header-section, html.boot-on .server-grid, html.boot-on .origin-section, html.boot-on .gh-section {
+            opacity: 0; transform: translateY(22px);
+            transition: opacity 0.9s ease, transform 0.9s ease;
+        }
+        html.boot-on.ready .header-section, html.boot-on.ready .server-grid, html.boot-on.ready .origin-section, html.boot-on.ready .gh-section { opacity: 1; transform: none; }
+        html.boot-on.ready .server-grid { transition-delay: 0.2s; }
+        html.boot-on.ready .origin-section { transition-delay: 0.4s; }
+        html.boot-on.ready .gh-section { transition-delay: 0.6s; }
+        html { scrollbar-gutter: stable; }   /* no width jump when the boot overlay unlocks scrolling */
+
         /* --- 5. MORE COMING (end of page) --- */
         .coming { padding: 100px 0 60px; text-align: center; opacity: 0; transform: translateY(28px); transition: opacity 1s ease, transform 1s ease; }
         .coming.in { opacity: 1; transform: none; }
@@ -176,6 +214,67 @@
 </head>
 <body>
 
+    <!-- OPENING ANIMATION (only visible when html has .boot-on) -->
+    <div id="boot" aria-hidden="true">
+        <div class="boot-title dot-matrix"><span id="boot-text"></span><span class="caret">_</span></div>
+        <div class="boot-log" id="boot-log">
+            <div>&gt; waking potato_node_01 ... <em>ok</em></div>
+            <div>&gt; shattered display ... <em>50% found</em></div>
+            <div>&gt; loading personality ... <em>ok</em></div>
+            <div>&gt; tokens per second ... <em>5 (lol)</em></div>
+        </div>
+        <div class="segments" id="boot-bar"></div>
+        <span class="boot-skip">[ CLICK TO SKIP ]</span>
+    </div>
+    <!-- runs right here (not at the end of the body) so slow scripts further down can't delay it -->
+    <script>
+    (function () {
+        var root = document.documentElement;
+        var boot = document.getElementById('boot');
+        if (!root.classList.contains('boot-on')) { boot.remove(); return; }
+
+        var TITLE = 'RAVI // DEV';
+        var textEl = document.getElementById('boot-text');
+        var lines = document.getElementById('boot-log').children;
+        var bar = document.getElementById('boot-bar');
+        var N = 20, html = '';
+        for (var i = 0; i < N; i++) html += '<b></b>';
+        bar.innerHTML = html;
+
+        var finished = false, timers = [];
+        function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
+
+        function finish() {
+            if (finished) return;
+            finished = true;
+            timers.forEach(clearTimeout);
+            try { sessionStorage.setItem('booted', '1'); } catch (e) {}
+            boot.classList.add('done');                  // overlay fades out
+            root.classList.add('ready');                 // sections fade up
+            setTimeout(function () { boot.remove(); }, 1000);                        // overlay can never come back
+            setTimeout(function () { root.classList.remove('boot-on'); }, 2200);     // clean up once transitions end
+        }
+
+        // 1. type the title
+        for (var c = 1; c <= TITLE.length; c++) {
+            (function (n) { later(function () { textEl.textContent = TITLE.slice(0, n); }, 250 + n * 75); })(c);
+        }
+        // 2. boot log lines
+        for (var l = 0; l < lines.length; l++) {
+            (function (n) { later(function () { lines[n].classList.add('show'); }, 900 + n * 380); })(l);
+        }
+        // 3. segmented bar fills left to right
+        for (var s = 0; s < N; s++) {
+            (function (n) { later(function () { bar.children[n].className = n >= N * 0.8 ? 'hot' : 'on'; }, 500 + n * 105); })(s);
+        }
+        // 4. lift the overlay
+        later(finish, 2900);
+
+        boot.addEventListener('click', finish);
+        document.addEventListener('keydown', finish);
+    })();
+    </script>
+
     <div class="container">
 
         <!-- IDENTITY HEADER -->
@@ -184,11 +283,12 @@
             <h1 class="dot-matrix">RAVI // DEV</h1>
             <div class="intro-text">
                 <p>
-                    Passionate <b>Software Engineer</b> and <b>Digital Artist</b> with a focus on bridging backend architecture and AI algorithms.
-                    I'm actively expanding my expertise in <b>Artificial Intelligence</b> by engineering custom Levenshtein distance algorithms,
-                    smart data imputation, and confidence-scoring modules to optimize enterprise systems.
+                    I'm a <b>software engineer</b> and <b>digital artist</b>. Currently an intern, spending my time around <b>AI models</b>, <b>CUDA</b>, and a <b>GB10</b>.
                     <br><br>
-                    Recognized as a <b>"Company MVP"</b> for delivering production-ready applications under high-pressure deadlines.
+                    I have a habit of turning random ideas into actual projects. This includes building my own <b>AI agent</b>, experimenting with local language models,
+                    and running services on hardware that has absolutely no business doing any of this.
+                    <br><br>
+                    It's a hobby. Apparently.
                 </p>
             </div>
         </header>
@@ -221,10 +321,13 @@
             <span class="mono">// THE_NAME_CONVENTION</span>
             <h2 class="dot-matrix">Why runsonpotato.dev?</h2>
             <p style="color: var(--text-muted);">
-                In the dev world, a "potato" is a low-spec machine struggling to keep up.
-                My server is quite literally a potato—a shattered S22 Ultra with a bleeding LCD and a display that is 50% "the void."
-                It runs this entire stack 24/7. This domain is a tribute to resourcefulness:
-                <b>the best code doesn't need a supercomputer; it just needs a heart.</b>
+                In developer slang, a potato is a machine that's barely keeping up. Mine happens to be a phone with a shattered screen, running an entire collection of services.
+                <br><br>
+                I turned an old S22 Ultra into my own little server using Termux. It hosts this site, serves my APIs, and runs a bunch of other personal projects.
+                <br><br>
+                It's not particularly powerful for what I'm asking it to do, but it gets the job done.
+                <br><br>
+                <b>And somehow, it's in production.</b>
             </p>
         </section>
 
@@ -354,19 +457,30 @@
             success: function (api) {
                 api.start();
                 api.addEventListener('viewerready', function () {
-                    var ZOOM_TWEAK = 1.0;   // phone too big? raise it (1.2). too small? lower it (0.8)
+                    // DEFAULT_ZOOM: lower = phone bigger, higher = phone smaller.
+                    // Try it live: open DevTools console and run setPhoneZoom(0.7), or load the page with ?zoom=0.7
+                    var DEFAULT_ZOOM = 0.57;
                     var frame = document.getElementById('sketchfab-frame');
-                    // the taller iframe makes Sketchfab frame the model bigger, so move the camera back by the same ratio
-                    var k = (frame.clientHeight / frame.parentElement.clientHeight) * ZOOM_TWEAK;
-                    api.getCameraLookAt(function (err, cam) {
-                        if (err) return;
-                        var p = cam.position, t = cam.target;
-                        api.setCameraLookAt([
-                            t[0] + (p[0] - t[0]) * k,
-                            t[1] + (p[1] - t[1]) * k,
-                            t[2] + (p[2] - t[2]) * k
-                        ], t, 0);
-                    });
+                    // the taller iframe makes Sketchfab frame the model bigger, so the camera is moved back by the same ratio
+                    var ratio = frame.clientHeight / frame.parentElement.clientHeight;
+                    var applied = 1;   // multiplier currently applied to the camera distance
+
+                    window.setPhoneZoom = function (z) {
+                        api.getCameraLookAt(function (err, cam) {
+                            if (err) return;
+                            var f = (ratio * z) / applied;
+                            var p = cam.position, t = cam.target;
+                            api.setCameraLookAt([
+                                t[0] + (p[0] - t[0]) * f,
+                                t[1] + (p[1] - t[1]) * f,
+                                t[2] + (p[2] - t[2]) * f
+                            ], t, 0);
+                            applied = ratio * z;
+                        });
+                    };
+
+                    var fromUrl = parseFloat(new URLSearchParams(location.search).get('zoom'));
+                    window.setPhoneZoom(fromUrl > 0 ? fromUrl : DEFAULT_ZOOM);
                 });
             }
         });
