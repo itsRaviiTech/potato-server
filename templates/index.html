@@ -146,10 +146,83 @@
         .activity-list .when { display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--nothing-red); margin-top: 2px; }
         .gh-msg { color: var(--text-muted); font-size: 13px; font-family: 'JetBrains Mono', monospace; }
 
+        /* --- 5. MORE COMING (end of page) --- */
+        .coming { padding: 100px 0 60px; text-align: center; opacity: 0; transform: translateY(28px); transition: opacity 1s ease, transform 1s ease; }
+        .coming.in { opacity: 1; transform: none; }
+        .coming h2 { font-size: clamp(1.6rem, 5vw, 3rem); margin: 10px 0 40px; }
+        .cursor { color: var(--nothing-red); animation: blink 1s steps(2) infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        .led-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: 28px; }
+        .led-panel canvas { display: block; width: 100%; }
+        .queue { max-width: 520px; margin: 44px auto 0; text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted); }
+        .queue div { display: flex; align-items: baseline; gap: 10px; padding: 6px 0; }
+        .queue .fill { flex: 1; border-bottom: 1px dotted #333; }
+        .queue .tag { color: var(--nothing-red); }
+        .queue .tag.pulse { animation: pulse 1.4s infinite; }
+        .sweep { max-width: 520px; margin: 26px auto 0; }
+        .coming-end { margin-top: 70px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #444; letter-spacing: 2px; }
+
+        /* --- 6. PRIVACY POLICY SECTION --- */
+        .policy-section {
+            margin-top: 60px;
+            margin-bottom: 80px;
+            padding: 40px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+        }
+        .policy-section h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+        }
+        .policy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-top: 20px;
+        }
+        .policy-card {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            background: #0d0d0d;
+        }
+        .policy-card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .policy-card h3::before {
+            content: "::";
+            color: var(--nothing-red);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .policy-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        .policy-footer {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            font-size: 12px;
+            color: #555;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
         @media (max-width: 900px) {
             .server-grid { grid-template-columns: 1fr; padding: 24px; }
             .gh-cols { grid-template-columns: 1fr; }
             .repo-grid { grid-template-columns: 1fr; }
+            .policy-section { padding: 24px; }
         }
 
         /* --- 0. OPENING ANIMATION --- */
@@ -171,31 +244,15 @@
         .boot-skip { position: absolute; bottom: 28px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #444; letter-spacing: 2px; }
 
         /* page sections fade up one after another once the overlay lifts */
-        html.boot-on .header-section, html.boot-on .server-grid, html.boot-on .origin-section, html.boot-on .gh-section {
+        html.boot-on .header-section, html.boot-on .server-grid, html.boot-on .origin-section, html.boot-on .gh-section, html.boot-on .policy-section {
             opacity: 0; transform: translateY(22px);
             transition: opacity 0.9s ease, transform 0.9s ease;
         }
-        html.boot-on.ready .header-section, html.boot-on.ready .server-grid, html.boot-on.ready .origin-section, html.boot-on.ready .gh-section { opacity: 1; transform: none; }
+        html.boot-on.ready .header-section, html.boot-on.ready .server-grid, html.boot-on.ready .origin-section, html.boot-on.ready .gh-section, html.boot-on.ready .policy-section { opacity: 1; transform: none; }
         html.boot-on.ready .server-grid { transition-delay: 0.2s; }
         html.boot-on.ready .origin-section { transition-delay: 0.4s; }
         html.boot-on.ready .gh-section { transition-delay: 0.6s; }
         html { scrollbar-gutter: stable; }   /* no width jump when the boot overlay unlocks scrolling */
-
-        /* --- 5. MORE COMING (end of page) --- */
-        .coming { padding: 100px 0 60px; text-align: center; opacity: 0; transform: translateY(28px); transition: opacity 1s ease, transform 1s ease; }
-        .coming.in { opacity: 1; transform: none; }
-        .coming h2 { font-size: clamp(1.6rem, 5vw, 3rem); margin: 10px 0 40px; }
-        .cursor { color: var(--nothing-red); animation: blink 1s steps(2) infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
-        .led-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: 28px; }
-        .led-panel canvas { display: block; width: 100%; }
-        .queue { max-width: 520px; margin: 44px auto 0; text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted); }
-        .queue div { display: flex; align-items: baseline; gap: 10px; padding: 6px 0; }
-        .queue .fill { flex: 1; border-bottom: 1px dotted #333; }
-        .queue .tag { color: var(--nothing-red); }
-        .queue .tag.pulse { animation: pulse 1.4s infinite; }
-        .sweep { max-width: 520px; margin: 26px auto 0; }
-        .coming-end { margin-top: 70px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #444; letter-spacing: 2px; }
 
         /* ---- experience styles kept for when the section comes back ---- */
         .experience-card { margin-bottom: 80px; }
@@ -251,7 +308,7 @@
             try { sessionStorage.setItem('booted', '1'); } catch (e) {}
             boot.classList.add('done');                  // overlay fades out
             root.classList.add('ready');                 // sections fade up
-            setTimeout(function () { boot.remove(); }, 1000);                        // overlay can never come back
+            setTimeout(function () { boot.remove(); }, 1000);                         // overlay can never come back
             setTimeout(function () { root.classList.remove('boot-on'); }, 2200);     // clean up once transitions end
         }
 
@@ -423,6 +480,39 @@
             <p class="coming-end">[ END_OF_PAGE // CHECK_BACK_SOON ]</p>
         </section>
 
+        <!-- PRIVACY POLICY SECTION -->
+        <section class="policy-section">
+            <span class="mono">// COMPLIANCE_AND_TELEMETRY</span>
+            <h2 class="dot-matrix">Privacy Policy</h2>
+
+            <div class="policy-grid">
+                <div class="policy-card">
+                    <h3>Data Collection</h3>
+                    <p>This site does not track personal identities, sell user records, or deploy third-party advertising cookies. Minimal server access logs (IP address, user agent) may be processed in volatile memory purely for network routing, DDoS mitigation, and tunnel security.</p>
+                </div>
+
+                <div class="policy-card">
+                    <h3>Hardware Telemetry</h3>
+                    <p>Live metrics displayed on this dashboard (CPU load, memory allocation, and uptime counters) reflect local host system telemetry queried via internal API endpoints. No client browser telemetry is harvested to compute these values.</p>
+                </div>
+
+                <div class="policy-card">
+                    <h3>External Services</h3>
+                    <p>Third-party integrations—such as Sketchfab 3D WebGL assets, Google Fonts, and public GitHub API requests—are loaded directly via client browser fetches subject to their respective privacy terms and CDN caching rules.</p>
+                </div>
+
+                <div class="policy-card">
+                    <h3>Local Storage</h3>
+                    <p>Client storage (<code>localStorage</code> / <code>sessionStorage</code>) is utilized strictly for performance optimization, storing rate-limit cache keys for external API data and suppressing the boot animation across active sessions.</p>
+                </div>
+            </div>
+
+            <div class="policy-footer mono">
+                <span>POLICY_REVISION: 2026.11 // GENERAL_DISCLOSURE</span>
+                <span>HOST_STATUS: SELF_CONTAINED</span>
+            </div>
+        </section>
+
         <footer style="padding: 100px 0; text-align: center; border-top: 1px solid var(--border);" class="mono">
             RAVI // S22_ULTRA_BACKEND // [MADE_IN_MALAYSIA]
         </footer>
@@ -490,7 +580,7 @@
     <!-- LIVE SERVER METERS -->
     <script>
     (function () {
-        var POLL_MS = 3000;                 // refresh every 3 seconds (change to 2000 or 5000 if you like)
+        var POLL_MS = 3000;                  // refresh every 3 seconds (change to 2000 or 5000 if you like)
         var SEGMENTS = 20;
 
         // First paint comes from the Jinja values, so there's no empty flash
